@@ -1,0 +1,173 @@
+#
+# Default Solaris Generic .profile
+# Shells covered: sh, ksh and bash
+#
+# Written by Fotis Gimian
+# http://github.com/fgimian
+#
+#ident  "@(#).profile   1.0     02/06/2012        FG"
+#
+
+# Set the default file creation permissions
+umask 027
+
+# Set the application path variable
+PATH=/usr/sbin:/sbin
+if [ -d /usr/sfw/sbin ]; then PATH=/usr/sfw/sbin:${PATH}; fi
+if [ -d /opt/sfw/sbin ]; then PATH=/opt/sfw/sbin:${PATH}; fi
+if [ -d /opt/csw/sbin ]; then PATH=/opt/csw/sbin:${PATH}; fi
+PATH=/usr/bin:/bin:${PATH}
+if [ -d /usr/sfw/bin ]; then PATH=/usr/sfw/bin:${PATH}; fi
+if [ -d /opt/sfw/bin ]; then PATH=/opt/sfw/bin:${PATH}; fi
+if [ -d /opt/csw/bin ]; then PATH=/opt/csw/bin:${PATH}; fi
+if [ -d $HOME/bin ]; then PATH=$HOME/bin:${PATH}; fi
+export PATH
+
+# Set the manual path variable
+MANPATH=/usr/man
+if [ -d /usr/sfw/man ]; then MANPATH=/usr/sfw/man:${MANPATH}; fi
+if [ -d /opt/sfw/man ]; then MANPATH=/opt/sfw/man:${MANPATH}; fi
+if [ -d /opt/csw/man ]; then MANPATH=/opt/csw/man:${MANPATH}; fi
+export MANPATH
+
+# Get the user's shell
+case $0 in
+   *bash ) SHELL=bash;;
+   *ksh )  SHELL=ksh;;
+   *sh )   SHELL=sh;;
+   * )     SHELL=other;;
+esac
+
+# Setup the INPUTRC configuration file
+if [ $SHELL = "bash" -a -z "$INPUTRC" -a ! -f "$HOME/.inputrc" -a -f /etc/inputrc ]; then
+   INPUTRC=/etc/inputrc
+   export INPUTRC
+fi
+
+# Set the VIM configuration directory so that the system-wide vimrc is read
+if [ -d /etc/opt/csw ]; then
+   VIM=/etc/opt/csw
+   export VIM
+elif [ -d /opt/sfw/share/vim ]; then
+   VIM=/opt/sfw/share/vim
+   export VIM
+fi
+
+# Set the path where TERMINFO files are stored and set the terminal to 256 colours
+if [ -d /opt/csw/share/terminfo ]; then
+   TERMINFO=/opt/csw/share/terminfo
+   TERM=xterm-256color
+   export TERMINFO TERM
+elif [ -d /opt/sfw/share/terminfo ]; then
+   TERMINFO=/opt/sfw/share/terminfo
+   TERM=xterm-256color
+   export TERMINFO TERM
+fi
+
+# Set the prompt ending
+if [ $LOGNAME = "root" ]; then
+   PROMPT_END=#
+else
+   PROMPT_END=\>
+fi
+
+# Set the prompt
+if [ $SHELL = "bash" ]; then
+   if [ `tty` != "/dev/console" ]; then
+      PROMPT_COMMAND='echo -ne "\033]0;${LOGNAME}@${HOSTNAME%%.*}:${PWD/$HOME/~}\007"'
+   fi
+   PS1="\u@\h:\w$PROMPT_END "
+   export PS1
+elif [ $SHELL = "ksh" ]; then
+   PS1="$LOGNAME@$(hostname):$PWD$PROMPT_END "
+   export PS1
+elif [ $SHELL = "sh" ]; then
+   PS1="`logname`@`hostname`:$PROMPT_END "
+   export PS1
+fi
+
+# Set the history rules
+if [ $SHELL = "bash" ]; then
+   # Use up & down arrow keys to access history in bash
+   HISTSIZE=50000
+   HISTFILESIZE=50000
+   HISTCONTROL=ignoredups
+   export HISTCONTROL HISTSIZE HISTFILESIZE
+elif [ $SHELL = "ksh" ]; then
+   # Use ESC+k to access history in ksh
+   set -o vi
+fi
+
+# Check the window size after each command andupdate the values of LINES and COLUMNS if required.
+if [ $SHELL = "bash" ]; then
+   shopt -s checkwinsize
+fi
+
+# Set the pager
+if [ -x /opt/csw/bin/less ]; then
+   PAGER="/opt/csw/bin/less -i"
+   export PAGER
+elif [ -x /opt/sfw/bin/less ]; then
+   PAGER="/opt/sfw/bin/less -i"
+   export PAGER
+elif [ -x /bin/less ]; then
+   PAGER="/bin/less -i"
+   export PAGER
+fi
+
+# Set the default editor
+if [ -x /opt/csw/bin/vim ]; then
+   EDITOR="/opt/csw/bin/vim"
+   export EDITOR
+elif [ -x /opt/sfw/bin/vim ]; then
+   EDITOR="/opt/sfw/bin/vim"
+   export EDITOR
+elif [ -x /bin/vi ]; then
+   EDITOR=/bin/vi
+   export EDITOR
+fi
+
+# Create aliases
+alias ..='cd ..'
+alias ...='cd ../..'
+alias cd..='cd ..'
+alias dir='ls -l'
+alias l='ls -alF'
+alias la='ls -la'
+alias ll='ls -l'
+alias ls-l='ls -l'
+alias ping='ping -s'
+alias md='mkdir -p'
+alias c='clear'
+alias o='less'
+alias x='exit'
+alias s='ssh-add'
+alias rd='rmdir'
+alias rehash='hash -r'
+alias md5='digest -a md5'
+alias md5sum='digest -a md5'
+alias dusk='du -sk * | sort -n'
+alias unmount='echo "Please try the command: umount" 1>&2; false'
+alias turnoff='shutdown -y -i5 -g0'
+
+# GNU application aliases (for native GNU tools or CSW addons)
+alias egrep='gegrep'
+alias fgrep='gfgrep'
+alias grep='ggrep'
+alias less='less -i'
+alias tar='gtar'
+
+# GNU application aliases (for CSW)
+if [ -x /opt/csw/bin/gawk -o -x /opt/sfw/bin/gawk ]; then alias awk='gawk'; fi
+if [ -x /opt/csw/bin/gcpio -o -x /opt/sfw/bin/gcpio ]; then alias cpio='gcpio'; fi
+if [ -x /opt/csw/bin/gfind -o -x /opt/sfw/bin/gfind ]; then alias find='gfind'; fi
+if [ -x /opt/csw/bin/glocate -o -x /opt/sfw/bin/glocate ]; then alias locate='glocate'; fi
+if [ -x /opt/csw/bin/gsed -o -x /opt/sfw/bin/gsed ]; then alias sed='gsed'; fi
+if [ -x /opt/csw/bin/gupdatedb -o -x /opt/sfw/bin/gupdatedb ]; then alias updatedb='gupdatedb'; fi
+if [ -x /opt/csw/bin/gxargs -o -x /opt/sfw/bin/gxargs ]; then alias xargs='gxargs'; fi
+if [ -x /opt/csw/bin/vim -o -x /opt/sfw/bin/vim ]; then alias vi='vim'; fi
+
+# Disable sending XOFF of ^S so that forward searching can be used
+if [ $SHELL = "bash" ]; then
+   stty -ixon
+fi

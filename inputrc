@@ -1,0 +1,20 @@
+#
+# Solaris inputrc Configuration
+#
+# Written by Fotis Gimian
+# http://github.com/fgimian
+#
+
+# Define functions for the insert, delete, home, end and page up/down keys
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": overwrite-mode
+
+# Set auto completion to be case insensitive
+set completion-ignore-case on
+
+# Display completion matches immediately instead of ringing a bell and delaying you
+set show-all-if-ambiguous on
