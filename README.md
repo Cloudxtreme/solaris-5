@@ -1,6 +1,6 @@
 # Installing & Customising Solaris
 
-Welcome to my Solaris Github repository.  This repository is primarily used as a [Wiki for Solaris](wiki) and relevant tweaks I have made to the operating system to make it feel and act more like Ubuntu.
+Welcome to my Solaris Github repository.  This repository is primarily used as a [Wiki for Solaris](https://github.com/fgimian/solaris/wiki) and relevant tweaks I have made to the operating system to make it feel and act more like Ubuntu.
 
 In summary, the files contained in this repository are as follows:
 
